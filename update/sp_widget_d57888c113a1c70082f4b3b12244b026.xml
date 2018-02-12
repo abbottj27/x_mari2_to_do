@@ -36,6 +36,7 @@
 				inputPlaceholder: to_do.description
 			},
 			function(inputValue) {
+				// Don't do anything if inputValue is empty
 				if (inputValue === false) {
 					 return false;
 				}
@@ -285,7 +286,7 @@
         <sys_created_on>2017-09-29 18:58:54</sys_created_on>
         <sys_customer_update>true</sys_customer_update>
         <sys_id>d57888c113a1c70082f4b3b12244b026</sys_id>
-        <sys_mod_count>174</sys_mod_count>
+        <sys_mod_count>175</sys_mod_count>
         <sys_name>To Do List</sys_name>
         <sys_package display_value="To Do" source="x_mari2_to_do">766648c113a1c70082f4b3b12244b0ee</sys_package>
         <sys_policy/>
@@ -293,7 +294,7 @@
         <sys_scope display_value="To Do">766648c113a1c70082f4b3b12244b0ee</sys_scope>
         <sys_update_name>sp_widget_d57888c113a1c70082f4b3b12244b026</sys_update_name>
         <sys_updated_by>abbottj</sys_updated_by>
-        <sys_updated_on>2018-02-12 20:28:14</sys_updated_on>
+        <sys_updated_on>2018-02-12 20:46:42</sys_updated_on>
         <template><![CDATA[<div class="panel panel-default">
 
   <!-- Heading -->

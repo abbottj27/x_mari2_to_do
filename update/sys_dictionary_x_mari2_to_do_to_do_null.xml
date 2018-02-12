@@ -51,17 +51,17 @@
         <sys_class_name>sys_dictionary</sys_class_name>
         <sys_created_by>abbottj</sys_created_by>
         <sys_created_on>2017-09-29 18:53:16</sys_created_on>
-        <sys_customer_update>true</sys_customer_update>
-        <sys_id>3a27048513a1c70082f4b3b12244b09a</sys_id>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>2dc870f4db9817404eab73e1ba961991</sys_id>
         <sys_mod_count>0</sys_mod_count>
         <sys_name>x_mari2_to_do_to_do</sys_name>
         <sys_package display_value="To Do" source="x_mari2_to_do">766648c113a1c70082f4b3b12244b0ee</sys_package>
         <sys_policy/>
         <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="To Do">766648c113a1c70082f4b3b12244b0ee</sys_scope>
-        <sys_update_name>sys_dictionary_x_mari2_to_do_to_do_null</sys_update_name>
-        <sys_updated_by>abbottj</sys_updated_by>
-        <sys_updated_on>2017-09-29 18:53:16</sys_updated_on>
+        <sys_update_name>sys_dictionary_x_mari2_to_do_to_do_NULL</sys_update_name>
+        <sys_updated_by>system</sys_updated_by>
+        <sys_updated_on>2018-02-12 20:44:15</sys_updated_on>
         <table_reference>false</table_reference>
         <text_index>false</text_index>
         <unique>false</unique>
