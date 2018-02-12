@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element label="To Do" max_length="40" name="x_mari2_to_do_to_do" type="collection">
+        <element label="Archived" max_length="40" name="archived" type="boolean"/>
+        <element label="Complete" max_length="40" name="complete" type="boolean"/>
+        <element display="true" label="Description" max_length="1000" name="description" type="string"/>
+        <element label="Order" max_length="40" name="order" type="integer"/>
+        <element default="javascript:gs.getUserID();" dynamic_default_value="2fd8e97bef3221002841f7f775c0fbc1" label="User" max_length="32" name="user" read_only="true" reference="sys_user" type="reference" use_dynamic_default="true"/>
+        <index name="index">
+            <element name="user"/>
+        </index>
+    </element>
+</database>

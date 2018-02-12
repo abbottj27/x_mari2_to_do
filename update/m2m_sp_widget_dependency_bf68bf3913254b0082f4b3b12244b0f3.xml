@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="m2m_sp_widget_dependency">
+    <m2m_sp_widget_dependency action="INSERT_OR_UPDATE">
+        <sp_dependency display_value="ngSweetAlert">c161ed2c4fe807405ff2e57d0210c754</sp_dependency>
+        <sp_widget display_value="To Do List">d57888c113a1c70082f4b3b12244b026</sp_widget>
+        <sys_class_name>m2m_sp_widget_dependency</sys_class_name>
+        <sys_created_by>abbottj</sys_created_by>
+        <sys_created_on>2017-10-02 20:22:49</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>bf68bf3913254b0082f4b3b12244b0f3</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>ngSweetAlert.To Do List</sys_name>
+        <sys_package display_value="To Do" source="x_mari2_to_do">766648c113a1c70082f4b3b12244b0ee</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="To Do">766648c113a1c70082f4b3b12244b0ee</sys_scope>
+        <sys_update_name>m2m_sp_widget_dependency_bf68bf3913254b0082f4b3b12244b0f3</sys_update_name>
+        <sys_updated_by>abbottj</sys_updated_by>
+        <sys_updated_on>2017-10-02 20:22:49</sys_updated_on>
+    </m2m_sp_widget_dependency>
+</record_update>

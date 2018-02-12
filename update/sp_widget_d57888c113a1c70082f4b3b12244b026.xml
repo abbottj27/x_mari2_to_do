@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <client_script><![CDATA[function($scope, spUtil, $http, SweetAlert) {
+    var c = this;
+
+    // Watches the To Do table for any updates.
+    spUtil.recordWatch($scope, c.data.tableName, '', function(name, data) {
+        spUtil.update($scope);
+    });
+
+    // Updates the To Do record's Complete attribute in ServiceNow.
+    c.updateToDo = function(to_do) {
+        // Build out the request body.
+        var req = {
+            'complete': (to_do.complete == 0) ? true : false
+        };
+        // Use Angular's $http service to PUT the record via ServiceNow's Table API.
+        $http.put(c.data.tableApiPrefix + c.data.tableName + '/' + to_do.sys_id, req)
+            .then(function(response) {
+                // Logs out the successful response.
+                //console.log('SUCCESS', response);
+            }, function(response) {
+                // Logs out the error response.
+                console.log('error', response);
+            });
+    };
+
+    // Archives the To Do record in ServiceNow.
+    c.archiveToDo = function(to_do) {
+        var req = {
+            'archived': true
+        };
+        // Use Angular's $http service to PUT the record via SerivceNow's Table API.
+        $http.put(c.data.tableApiPrefix + c.data.tableName + '/' + to_do.sys_id, req)
+            .then(function(response) {
+                // Logs out the successful response.
+                //console.log('SUCCESS', response);
+
+                // Removes the to_do from the to_dos array.
+                c.data.to_dos.splice(to_do, 1);
+            }, function(response) {
+                // Logs out the error response.
+                console.log('error', response);
+            });
+    };
+
+    // Asks the user to confirm that they wish to archive.
+    c.confirmArchive = function(to_do) {
+        SweetAlert.swal({
+                title: 'Are you sure?',
+                text: 'This item will be archived.',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dd6b55',
+                confirmButtonText: 'Yes, get rid of it!',
+                closeOnConfirm: true
+            },
+            function(isConfirm) {
+                if (isConfirm) {
+                    c.archiveToDo(to_do);
+                }
+            });
+    };
+
+    // Archives all of the To Do items.
+    c.archiveAll = function() {
+        // First, ask the user to confirm that they want all items archived.
+        SweetAlert.swal({
+                title: 'Are you sure?',
+                text: 'All items will be archived.',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dd6b55',
+                confirmButtonText: 'Yes, get rid of them all!',
+                closeOnConfirm: true
+            },
+            function(isConfirm) {
+                if (isConfirm) {
+                    for (var i = 0; i < c.data.to_dos.length; i++) {
+                        c.archiveToDo(c.data.to_dos[i], true);
+                    }
+                }
+            });
+    };
+
+    // Loops through the To Do items and updates the Order attributes in ServiceNow.
+    c.dragControlListeners = {
+        disabled: false,
+        // Upon the event's stop, start the re-order on the back-end.
+        stop: function(event, ui) {
+            for (var i = 0; i < c.data.to_dos.length; i++) {
+                // Build out the request body using the array position
+                // to set the To Do item's order.
+                var req = {
+                    'order': i
+                };
+                // Use Angular's $http service to PUT the record via ServiceNow's Table API.
+                $http.put(c.data.tableApiPrefix + c.data.tableName + '/' + c.data.to_dos[i].sys_id, req)
+                    .then(function(response) {
+                        // Logs out the successful response.
+                        //console.log('SUCCESS', response);
+                    }, function(response) {
+                        // Logs out the error response.
+                        console.log('error', response);
+                    });
+            }
+        }
+    };
+
+    // Toggles completedMode.
+    c.toggleCompletedMode = function(truthy) {
+        c.data.completedMode = truthy;
+        var upTable = 'sys_user_preference';
+        var req = {
+            'value': truthy
+        };
+
+        // If the user doesn't have a completedMode user preference
+        // yet, go create one.
+        if (!c.data.hasCompletedModePref) {
+            // Build out additional request parameters needed for creation.
+            req.description = "Determines whether or not the To Do List page will load with 'completedMode' turned on or off.";
+            req.name = 'x_mari2_to_do_to_do.to_do_list.completed_mode';
+            req.user = c.data.userId;
+            req.type = 'boolean';
+            $http.post(c.data.tableApiPrefix + upTable, req)
+                .then(function(response) {
+                    // Logs out the successful response.
+                    //console.log('SUCCESS', response);
+
+                    c.data.hasCompletedModePref = true;
+                    c.data.completedModePrefId = response.data.result.sys_id;
+                }, function(response) {
+                    // Logs out the error response.
+                    console.log('error', response);
+                });
+        } else {
+            // If the completedMode user preference already exists, go
+            // update that one.
+            $http.put(c.data.tableApiPrefix + upTable + '/' + c.data.completedModePrefId, req)
+                .then(function(response) {
+                    // Logs out the successful response.
+                    //console.log('SUCCESS', response);
+                }, function(response) {
+                    // Logs out the error response.
+                    console.log('error', response);
+                });
+        }
+    };
+
+    // Checks to see if all To Do items are complete. Returns true if
+    // so. Returns false if not.
+    c.checkAllComplete = function() {
+      var allComplete = true;
+      for (var i = 0; i < c.data.to_dos.length; i++) {
+        if (c.data.to_dos[i].complete != '1') {
+          allComplete = false;
+        }
+      }
+      return allComplete;
+    };
+
+    // Watches completedMode and the to_dos array, so that the 'Congratulations!'
+    // message will show if everything's complete and completedMode is off.
+    $scope.$watchGroup(['c.data.completedMode', 'c.data.to_dos'], function() {
+      c.data.allComplete = c.checkAllComplete();
+    });
+}
+]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.pointer {
+  cursor: pointer;
+}
+
+.strike {
+ text-decoration: line-through;
+}
+
+.mover {
+  cursor: move;
+}
+</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>to_do_list</id>
+        <internal>false</internal>
+        <link/>
+        <name>To Do List</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+	data.userId = gs.getUserID();
+	data.tableApiPrefix = 'api/now/table/';
+	data.tableName = 'x_mari2_to_do_to_do';
+
+	// Determines if completedMode should be turned on or off by default.
+	data.completedMode = true;
+	data.hasCompletedModePref = false;
+	var up = new GlideRecord('sys_user_preference');
+	up.addQuery('user', data.userId);
+	up.addQuery('name', 'x_mari2_to_do_to_do.to_do_list.completed_mode');
+	up.query();
+	if (up.next()) {
+		data.hasCompletedModePref = true;
+		data.completedModePrefId = up.getUniqueValue();
+		data.completedMode = (up.getValue('value') == 'false') ? false : true;
+	}
+
+	// Gets all of a user's To Do items and builds them out as an array.
+		data.to_dos = [];
+		var gr = new GlideRecord(data.tableName);
+		gr.addQuery('user', data.userId);
+		gr.addQuery('archived', false);
+		gr.orderBy('order');
+		gr.query();
+		while (gr.next()) {
+			var to_do = {};
+			to_do.description = gr.getDisplayValue('description');
+			to_do.complete = gr.getValue('complete');
+			to_do.sys_id = gr.getUniqueValue();
+			to_do.canRead = gr.canRead();
+			to_do.canWrite = gr.canWrite();
+			to_do.canDelete = gr.canDelete();
+			to_do.order = gr.getValue('order');
+			data.to_dos.push(to_do);
+		}
+
+		var allComplete = true;
+		for (var i = 0; i < data.to_dos.length; i++) {
+			if (!data.to_dos[i].complete) {
+				allComplete = false;
+			}
+		}
+
+		data.allComplete = allComplete;
+})();
+]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>abbottj</sys_created_by>
+        <sys_created_on>2017-09-29 18:58:54</sys_created_on>
+        <sys_customer_update>true</sys_customer_update>
+        <sys_id>d57888c113a1c70082f4b3b12244b026</sys_id>
+        <sys_mod_count>160</sys_mod_count>
+        <sys_name>To Do List</sys_name>
+        <sys_package display_value="To Do" source="x_mari2_to_do">766648c113a1c70082f4b3b12244b0ee</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="To Do">766648c113a1c70082f4b3b12244b0ee</sys_scope>
+        <sys_update_name>sp_widget_d57888c113a1c70082f4b3b12244b026</sys_update_name>
+        <sys_updated_by>abbottj</sys_updated_by>
+        <sys_updated_on>2017-10-05 19:52:46</sys_updated_on>
+        <template><![CDATA[<div class="panel panel-default">
+
+  <!-- Heading -->
+  <div class="panel-heading">
+    To Do List
+  </div>
+
+  <!-- List of To Do items -->
+  <div class="list-group" ui-sortable="c.dragControlListeners" ng-model="c.data.to_dos">
+    <a class="list-group-item mover" ng-repeat="to_do in c.data.to_dos" ng-if="to_do.canRead" ui-sortable-item ui-sortable-handle ng-hide="!c.data.completedMode && to_do.complete == '1'">
+      <input class="pull-left pointer" type="checkbox" ng-click="c.updateToDo(to_do)" ng-checked="to_do.complete == '1'" ng-if="to_do.canWrite" />
+      <div class="m-l-lg">
+        <b class="text-primary" ng-class="{strike: to_do.complete == 1}">{{to_do.description}}</b>
+        <i class="fa fa-archive pull-right pointer" ng-click="c.confirmArchive(to_do)" ng-if="to_do.canWrite"></i>
+      </div>
+    </a>
+  </div>
+
+  <!-- Content if no To Do items -->
+  <div class="b-t wrapper text-center" ng-if="c.data.to_dos.length == 0 || (!c.data.completedMode && c.data.allComplete)">
+    Congratulations! You have nothing to do.
+  </div>
+
+</div>
+<!-- Complete List button -->
+<div class="form-group" ng-if="c.data.to_dos.length > 0">
+  <button type="button" class="btn btn-default" ng-click="c.archiveAll()">
+    <i class="fa fa-archive"></i>
+    Archive All
+  </button>
+  <button type="button" class="btn btn-default" ng-click="c.toggleCompletedMode(false)" ng-if="c.data.completedMode">
+    Hide Completed Items
+  </button>
+  <button type="button" class="btn btn-primary" ng-click="c.toggleCompletedMode(true)" ng-if="!c.data.completedMode">
+    Show Completed Items
+  </button>
+</div>
+]]></template>
+    </sp_widget>
+</record_update>
