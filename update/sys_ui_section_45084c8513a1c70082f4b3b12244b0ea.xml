@@ -79,7 +79,7 @@
             <sys_class_name>sys_ui_section</sys_class_name>
             <sys_created_by>abbottj</sys_created_by>
             <sys_created_on>2017-09-29 18:56:59</sys_created_on>
-            <sys_customer_update>true</sys_customer_update>
+            <sys_customer_update>false</sys_customer_update>
             <sys_domain>global</sys_domain>
             <sys_id>45084c8513a1c70082f4b3b12244b0ea</sys_id>
             <sys_mod_count>0</sys_mod_count>
